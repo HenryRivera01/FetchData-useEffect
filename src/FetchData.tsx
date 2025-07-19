@@ -1,5 +1,3 @@
-
-
 /*
 Setup Challenge
 
@@ -17,32 +15,36 @@ Setup Challenge
 
 */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const url = 'https://jsonplaceholder.typicode.com/posts';
+const url = "https://api.github.com/users";
 
 export const FetchData = () => {
-//useEffect for call fetchData function when the componentens are mount
-useEffect(()=>{
+  //useEffect for call fetchData function when the componentens are mount
+  const [users, setUsers] = useState();
+
+  useEffect(() => {
     async function fetchData() {
-        try {
-            const res = await fetch(url); //make the request fot the API
-            const data = await res.json(); //converts the raw response to json 
-            //Data now contain the actual array of users
-            console.log(data); // print the users
-        } catch (err) {
-            console.error(err);
-        }
+      try {
+        const res = await fetch(url); //make the request fot the API
+        const data = await res.json(); //converts the raw response to json
+        //Data now contain the actual array of users
+        console.log(data); // print the users
+        setUsers(data);
+      } catch (err) {
+        console.error(err);
+      }
     }
-    fetchData()
-},[]) //Empty dependency array for call useEffect once  
+    fetchData();
+  }, []); //Empty dependency array for call useEffect once
 
-  return (
-    <div>FetchData</div>
-  )
-}
+  const infoUsers = users.map(({ login, avatar_url, html_url }) => {
+    return { login, avatar_url, html_url };
+  });
 
+  console.log(infoUsers);
 
-
+  return <div>FetchData</div>;
+};
 
 export default FetchData;
