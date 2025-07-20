@@ -16,21 +16,25 @@ Setup Challenge
 */
 
 import { useEffect, useState } from "react";
+import type { UserType } from "./UserType"
 
 const url = "https://api.github.com/users";
 
 export const FetchData = () => {
   //useEffect for call fetchData function when the componentens are mount
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState<UserType[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const res = await fetch(url); //make the request fot the API
-        const data = await res.json(); //converts the raw response to json
+        const data : UserType[] = await res.json(); //converts the raw response to json
         //Data now contain the actual array of users
         console.log(data); // print the users
-        setUsers(data);
+        const infoUsers = data.map(({ login, avatar_url, html_url }) => {
+        return { login, avatar_url, html_url };
+        });
+        setUsers(infoUsers);
       } catch (err) {
         console.error(err);
       }
@@ -38,13 +42,22 @@ export const FetchData = () => {
     fetchData();
   }, []); //Empty dependency array for call useEffect once
 
-  const infoUsers = users.map(({ login, avatar_url, html_url }) => {
-    return { login, avatar_url, html_url };
-  });
+  
 
-  console.log(infoUsers);
+  console.log(users);
 
-  return <div>FetchData</div>;
+  return <div className="users-container">
+    {users.map((user)=>{
+        return (
+            <div className="user-container">
+            <img src={user.avatar_url} alt={user.login} />
+            <h2>{user.login}</h2>
+            <a href={user.html_url}>{user.html_url}</a>
+            </div>
+
+        )
+    })}
+  </div>;
 };
 
 export default FetchData;
